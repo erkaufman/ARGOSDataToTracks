@@ -38,7 +38,7 @@ inputFileObj = open(inputFile,'r')
 lineString = inputFileObj.readline()
 
 # Start the while loop
- while lineString:
+while lineString:
     
     # Set code to run only if the line contains the string "Date: "
     if ("Date :" in lineString):
@@ -58,9 +58,30 @@ lineString = inputFileObj.readline()
         # Extract the date we need to variables
         obsLat = line2Data[2]
         obsLon= line2Data[5]
-        
+
+    # Try to convert the coordinates to numbers
+    try:
         # Print results to see how we're doing
-        print (tagID,"Lat:"+obsLat,"Long:"+obsLon)
+        print(tagID, "Lat:" + obsLat, "Long:" + obsLon)
+
+        # Convert raw coordinate strings to numbers
+        if obsLat[-1] == 'N':
+            obsLat = float(obsLat[:-1])
+        else:
+            obsLat = float(obsLat[:-1]) * -1
+        if obsLon[-1] == 'E':
+            obsLon = float(obsLon[:-1])
+        else:
+            obsLon = float(obsLon[:-1]) * -1
+
+        # Construct a point object from the feature class
+        obsPoint = arcpy.Point()
+        obsPoint.X = obsLon
+        obsPoint.Y = obsLat
+    except Exception as e:
+        print(f"Error adding record {tagID} to the output: {e}")
+
+        
         
     # Move to the next line so the while loop progresses
     lineString = inputFileObj.readline()
