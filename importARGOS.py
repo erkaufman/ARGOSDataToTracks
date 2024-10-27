@@ -12,10 +12,17 @@
 
 # Import packages
 import sys, os, arcpy
+arcpy.env.overwriteOutput= True
 
 # Set input variable (Hard-wired)
 inputFile = 'V:/ARGOSTracking/Data/ARGOSData/1997dg.txt'
 outputFC = 'V:/ARGOSTracking/Scratch/ARGOSTrack.shp'
+outputSR = arcpy.SpatialReference(54002)
+
+## Prepare a new feature class to which we'll add tracking points
+# Create an empty feature class; requires the path and name as separate parameters
+outPath, outName  = os.path.split(outputFC)
+arcpy.CreateFeatureclass_management(outPath, outName, '', '', '', '', outputSR)
 
 # Construct a while loop to iterate through all lines in the datafile
 # Open the ARGOS data file for reading
@@ -25,7 +32,7 @@ inputFileObj = open(inputFile,'r')
 lineString = inputFileObj.readline()
 
 # Start the while loop
-while lineString:
+ while lineString:
     
     # Set code to run only if the line contains the string "Date: "
     if ("Date :" in lineString):
