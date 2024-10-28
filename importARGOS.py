@@ -15,9 +15,9 @@ import sys, os, arcpy
 arcpy.env.overwriteOutput= True
 
 # Set input variable (Hard-wired)
-inputFolder = 'V:/ARGOSTracking/Data/ARGOSData'
-outputFC = 'V:/ARGOSTracking/Scratch/ARGOSTrack.shp'
-outputSR = arcpy.SpatialReference(54002)
+inputFolder = arcpy.GetParameterAsText(0)   #'V:/ARGOSTracking/Data/ARGOSData'
+outputFC = arcpy.GetParameterAsText(1)      #'V:/ARGOSTracking/Scratch/ARGOSTrack.shp'
+outputSR = arcpy.GetParameterAsText(2)      #arcpy.SpatialReference(54002)
 
 ## Prepare a new feature class to which we'll add tracking points
 # Create an empty feature class; requires the path and name as separate parameters
@@ -44,6 +44,7 @@ for inputFile in os.listdir(inputFolder):
 
     # Construct a while loop to iterate through all lines in the datafile
     # Open the ARGOS data file for reading
+    arcpy.AddMessage(f'Working on file {inputFile}')
     inputFileObj = open(os.path.join(inputFolder, inputFile),'r')
 
     # Get the first line of data, so we can use a while loop
@@ -104,7 +105,7 @@ for inputFile in os.listdir(inputFolder):
 
             # Handle any error
             except Exception as e:
-                print(f"Error adding record {tagID} to the output: {e}")
+                arcpy.AddWarning(f"Error adding record {tagID} to the output: {e}")
 
             
             
@@ -116,3 +117,5 @@ for inputFile in os.listdir(inputFolder):
 
 # Delete the cursor object
 del cur
+
+arcpy.AddMessage("All done!")
